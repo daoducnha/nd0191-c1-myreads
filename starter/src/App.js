@@ -1,8 +1,50 @@
 import "./App.css";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { getAll, update } from "./BooksAPI.js";
 function App() {
+  const [books, setBooks] = useState([]);
   const [showSearchPage, setShowSearchpage] = useState(false);
+
+  useEffect(() => {
+    getAll().then((books) => {
+      setBooks(books);
+    });
+  }, []);
+
+  const onChangeOption = (pre, cur) => {
+    scrollTo(cur || "");
+    console.log("preValue", pre)
+    console.log("currentValue", cur)
+    switch (cur) {
+      case cur:
+        
+        break;
+    
+      default:
+        break;
+    }
+  };
+
+  const scrollTo = (value) => {
+    if (value) {
+      let top = window.document.getElementById(value + "Id")?.offsetTop || 0;
+      if(top) {
+        window.scrollTo({
+          top: top,
+          left: 100,
+          behavior: "smooth",
+        });
+      }
+    }
+  }
+
+  const moveBookToShelf = (book, shelf) => {
+    update(book, shelf).then(() => {
+      setBooks((prevBooks) =>
+        prevBooks.map((itm) => (itm.id === book.id ? { ...itm, shelf } : itm))
+      );
+    });
+  };
 
   return (
     <div className="app">
@@ -33,7 +75,7 @@ function App() {
           </div>
           <div className="list-books-content">
             <div>
-              <div className="bookshelf">
+              <div className="bookshelf" id="currentlyReadingId">
                 <h2 className="bookshelf-title">Currently Reading</h2>
                 <div className="bookshelf-books">
                   <ol className="books-grid">
@@ -50,7 +92,9 @@ function App() {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
+                            <select
+                              onChange={(e) => onChangeOption("currentlyReading", e.target.value)}
+                            >
                               <option value="none" disabled>
                                 Move to...
                               </option>
@@ -80,7 +124,9 @@ function App() {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
+                            <select
+                              onChange={(e) => onChangeOption("currentlyReading", e.target.value)}
+                            >
                               <option value="none" disabled>
                                 Move to...
                               </option>
@@ -100,7 +146,7 @@ function App() {
                   </ol>
                 </div>
               </div>
-              <div className="bookshelf">
+              <div className="bookshelf" id="wantToReadId">
                 <h2 className="bookshelf-title">Want to Read</h2>
                 <div className="bookshelf-books">
                   <ol className="books-grid">
@@ -117,7 +163,9 @@ function App() {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
+                            <select
+                              onChange={(e) => onChangeOption("wantToRead", e.target.value)}
+                            >
                               <option value="none" disabled>
                                 Move to...
                               </option>
@@ -147,7 +195,9 @@ function App() {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
+                            <select
+                              onChange={(e) => onChangeOption("wantToRead", e.target.value)}
+                            >
                               <option value="none" disabled>
                                 Move to...
                               </option>
@@ -169,7 +219,7 @@ function App() {
                   </ol>
                 </div>
               </div>
-              <div className="bookshelf">
+              <div className="bookshelf" id="readId">
                 <h2 className="bookshelf-title">Read</h2>
                 <div className="bookshelf-books">
                   <ol className="books-grid">
@@ -186,7 +236,9 @@ function App() {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
+                            <select
+                              onChange={(e) => onChangeOption("read", e.target.value)}
+                            >
                               <option value="none" disabled>
                                 Move to...
                               </option>
@@ -216,7 +268,9 @@ function App() {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
+                            <select
+                              onChange={(e) => onChangeOption("read", e.target.value)}
+                            >
                               <option value="none" disabled>
                                 Move to...
                               </option>
@@ -248,7 +302,9 @@ function App() {
                             }}
                           ></div>
                           <div className="book-shelf-changer">
-                            <select>
+                            <select
+                              onChange={(e) => onChangeOption("read", e.target.value)}
+                            >
                               <option value="none" disabled>
                                 Move to...
                               </option>
