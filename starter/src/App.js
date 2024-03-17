@@ -35,7 +35,7 @@ function App() {
   }, []);
 
   const handleChangeShelf = (currentShelf, newShelf, book) => {
-
+    book.shelf = newShelf;
     BooksAPI.update(book, newShelf)
     .then(() => {
 
@@ -74,7 +74,7 @@ function App() {
         />} />
     <Route 
       path="/search"
-      element={ <SearchBook onChangeShelf={handleChangeShelf}/>}
+      element={ <SearchBook books={[...books.currentlyReading, ...books.wantToRead, ...books.read]} onChangeShelf={handleChangeShelf}/>}
     />
 
   </Routes>

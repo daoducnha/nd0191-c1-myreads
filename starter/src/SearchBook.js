@@ -2,30 +2,44 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as BookAPI from "./BooksAPI";
 import Book from "./Book";
-import { useNavigate } from 'react-router-dom';
 
-const SearchBook = ({onChangeShelf}) => {
+const SearchBook = ({books, onChangeShelf}) => {
   
 
   const [query, setQuery] = useState("");
   const [searchResult, setSearchResult] = useState([]);
 
   const updateQuery = (query) => {
-    console.log(query);
     setQuery(query.trim());
   };
-
-  
-
   useEffect(() => {
     const search = async () => {
-      const res = await BookAPI.search(query, 20);
-      setSearchResult(res);
+      try {
+        const searchResponse = await BookAPI.search(query, 20);
+
+        if (searchResponse.error) {
+          setSearchResult([]);
+        } else {
+          const updatedSearchResult = searchResponse.map((searchBook) => {
+            const bookFound = books.find((book) => book.id === searchBook.id);
+            if (bookFound) {
+              searchBook.shelf = bookFound.shelf;
+            } else {
+              searchBook.shelf = "none";
+            }
+            return searchBook;
+          });
+          console.log(updatedSearchResult)
+          setSearchResult(updatedSearchResult);
+        }
+      } catch (error) {
+        console.error("Error searching books:", error);
+        setSearchResult([]);
+      }
     };
 
     search();
-  }, [query]);
-
+  }, [query, books]);
 
   return (
     <div>
